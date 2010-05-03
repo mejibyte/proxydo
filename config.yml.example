@@ -1,5 +1,5 @@
 ---
-# Configuration for the outgoing proxy. That is, petitions that from inside
+# Configuration for the outgoing proxy. That is, petitions that go from inside
 # our LAN to the internet.
 outgoing:
     enabled: yes
