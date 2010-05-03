@@ -19,6 +19,8 @@ Proxydo is a stupidly simple proxy.
     make
     sudo make install
 
+  This will copy a bunch of files to /usr/local.
+
 
   
 
