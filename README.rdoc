@@ -1,0 +1,24 @@
+=Proxydo
+
+Proxydo is a stupidly simple proxy.
+
+==Installation on Mac OS X
+
+- Install CMake
+
+  sudo port install cmake
+
+- Install yaml-cpp
+
+  curl -O http://yaml-cpp.googlecode.com/files/yaml-cpp-0.2.5.tar.gz
+  tar zxvf yaml-cpp-0.2.5.tar.gz
+  cd yaml-cpp-0.2.5
+  mkdir build
+  cd build
+  cmake ..
+  make
+  sudo make install
+
+
+  
+
