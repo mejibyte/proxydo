@@ -1,0 +1,22 @@
+---
+# Configuration for the outgoing proxy. That is, petitions that from inside
+# our LAN to the internet.
+outgoing:
+    enabled: yes
+    port: 8080
+    block:
+        - xxx.com
+        - asdf.com
+
+# Configuration for the incoming proxy. That is, petitions that come from
+# the internet to inside our LAN.
+incoming:
+   enabled: no
+   port: 80
+   map:
+        portal1/: 200.180.105.3
+        portal2/: 200.180.105.4
+
+
+
+
