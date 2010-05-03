@@ -6,18 +6,18 @@ Proxydo is a stupidly simple proxy.
 
 - Install CMake
 
-  sudo port install cmake
+    sudo port install cmake
 
 - Install yaml-cpp
 
-  curl -O http://yaml-cpp.googlecode.com/files/yaml-cpp-0.2.5.tar.gz
-  tar zxvf yaml-cpp-0.2.5.tar.gz
-  cd yaml-cpp-0.2.5
-  mkdir build
-  cd build
-  cmake ..
-  make
-  sudo make install
+    curl -O http://yaml-cpp.googlecode.com/files/yaml-cpp-0.2.5.tar.gz
+    tar zxvf yaml-cpp-0.2.5.tar.gz
+    cd yaml-cpp-0.2.5
+    mkdir build
+    cd build
+    cmake ..
+    make
+    sudo make install
 
 
   
