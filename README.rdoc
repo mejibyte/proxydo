@@ -24,6 +24,7 @@ Proxydo is a stupidly simple proxy.
 - Clone and compile Proxydo
 
     git clone git@github.com:andmej/proxydo.git
+    cd proxydo
     rake
 
 - The compiled binary lies in /build. 
