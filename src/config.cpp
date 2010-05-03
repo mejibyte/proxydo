@@ -24,9 +24,9 @@ std::auto_ptr<YAML::Node> Config::get_node(string property) throw (char *){
 	}
 	vector<string> path = split(property);
 	std::auto_ptr<YAML::Node> node = doc.Clone();
-	
+
 	for (int i = 0; i < path.size(); ++i){
-	 		node = (*node)[path[i]].Clone();
+		node = (*node)[path[i]].Clone();
 	}
 	fin.close();
 	return node;	
@@ -56,24 +56,24 @@ string Config::get_string(string property) {
 }
 
 vector<string> Config::get_vector_string(string property){
-		std::auto_ptr<YAML::Node> node = get_node(property);
-		vector<string> ans;
-		for (int i = 0; i < node->size(); ++i){
-			ans.push_back((*node)[i]);
-		}
-		return ans;	
+	std::auto_ptr<YAML::Node> node = get_node(property);
+	vector<string> ans;
+	for (int i = 0; i < node->size(); ++i){
+		ans.push_back((*node)[i]);
+	}
+	return ans;	
 }
 
 map<string, string> Config::get_map_string_string(string property){
-		std::auto_ptr<YAML::Node> node = get_node(property);
-    map<string, string> ans;
-		for(YAML::Iterator it = node->begin(); it != node->end(); ++it) {
-		    std::string key, value;
-		    it.first() >> key;
-		    it.second() >> value;
-				ans[key] = value;
-	  }
-		return ans;	
+	std::auto_ptr<YAML::Node> node = get_node(property);
+	map<string, string> ans;
+	for(YAML::Iterator it = node->begin(); it != node->end(); ++it) {
+		std::string key, value;
+		it.first() >> key;
+		it.second() >> value;
+		ans[key] = value;
+	}
+	return ans;	
 }
 
 // Splits s by delimiter, and returns a vector with all the parts.
