@@ -14,8 +14,11 @@ incoming:
    enabled: no
    port: 80
    map:
-        portal1/: 200.180.105.3
-        portal2/: 200.180.105.4
+        portal1/: 200.180.105.3:80
+        portal2/: 200.180.105.4:80
+        portal3/subportal1/: 200.180.105.5:80
+        portal3/subportal2/: 200.180.105.5:81
+   default: 127.0.0.1:80
 
 
 
