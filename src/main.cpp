@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include "OutgoingProxy.h"
+#include "IncomingProxy.h"
 #include "config.h"
 using namespace std;
 
