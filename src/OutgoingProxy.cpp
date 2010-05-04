@@ -1,6 +1,4 @@
-#include <string>
 #include <iostream>
-#include <vector>
 
 #include "sockets/api.h"
 
@@ -15,8 +13,7 @@ void OutgoingProxy::run(){
 	std::cout<<"[INFO] Starting..."<<std::endl;
 	try{
 		ServerSocket server (port);
-		while ( true ){
-			
+		while ( true ){			
 			ServerSocket sock_server;
 			server.accept ( sock_server );
 			try{
