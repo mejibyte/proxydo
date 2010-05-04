@@ -1,8 +1,7 @@
 #include <iostream>
 #include <pthread.h>
 
-#include "sockets/ClientSocket.h"
-#include "sockets/ServerSocket.h"
+#include "sockets/api.h"
 
 #include "IncomingProxy.h"
 
@@ -12,23 +11,22 @@ IncomingProxy::IncomingProxy(int port) : port (port) {
 }
 
 void IncomingProxy::run(){
-    try {
-      ServerSocket proxy (port);
-        while (true) {
-          ServerSocket connection;
-          proxy.accept(connection);
+	try {
+		ServerSocket proxy (port);
+		while (true) {
+			ServerSocket connection;
+			proxy.accept(connection);
 
-          pthread_t threads[NUM_THREADS];
-          int request_thread;
-          long t;
-          for(t=0; t<NUM_THREADS; t++){
-            request_thread = pthread_create(&threads[t], NULL, getResource, (void *)connection);
-          }
-        }
-          pthread_exit(NULL);
-        }
-      }
-    catch (SocketException& e)  {
-      //Exception catched
-    }
-  }  
+			pthread_t threads[NUM_THREADS];
+			int request_thread;
+			long t;
+			for(t=0; t<NUM_THREADS; t++){
+			//request_thread = pthread_create(&threads[t], NULL, getResource, (void *)connection);
+			}
+		}
+		pthread_exit(NULL);
+	}
+	catch (SocketException& e)  {
+	//Exception catched
+	}
+}
