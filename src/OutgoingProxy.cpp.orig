@@ -1,11 +1,12 @@
-#include "sockets/api.h"
+<<<<<<< HEAD
+#include "sockets/ServerSocket.h"
+#include "sockets/SocketException.h"
+#include "sockets/ClientSocket.h"
 #include <string>
 #include <iostream>
 #include "config.h"
 
-#include "OutgoingProxy.h"
-
-OutgoingProxy::OutgoingProxy() {
+	using namespace std;
 	
 OutgoingProxy::OutgoingProxy(int port, vector<string> bloquedHost) : port(port), bloquedHost(bloquedHost)) {
 	
@@ -53,4 +54,12 @@ void OutgoingProxy::DestinationThread(ServerSocket sock_server,vector<string> bl
 	    }
 		sock_server << data; //WRITE TO ORIGIN
 	}
+=======
+#include "sockets/api.h"
+
+#include "OutgoingProxy.h"
+
+OutgoingProxy::OutgoingProxy() {
+	
+>>>>>>> b193cc78dc6702515313b4ac82cf00bf69a49a7f
 }

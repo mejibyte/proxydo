@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include <fstream>
 #include <string>
 #include <vector>
@@ -22,3 +25,4 @@ public:
 	std::vector<std::string> split(std::string, char = '.');
 };
 
+#endif

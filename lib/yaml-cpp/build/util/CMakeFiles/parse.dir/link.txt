@@ -1,0 +1,1 @@
+/usr/bin/c++   -O2 -Wall -Wextra -pedantic -Wno-long-long    CMakeFiles/parse.dir/parse.cpp.o  -o parse -rdynamic ../libyaml-cpp.so.0.2.5 -Wl,-rpath,/home/acadavid/proxydo/lib/yaml-cpp/build 
