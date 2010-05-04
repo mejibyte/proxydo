@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include <fstream>
 #include <string>
 #include <vector>
@@ -6,7 +9,7 @@
 #include <yaml.h>
 
 class Config {
-	std::auto_ptr<YAML::Node> get_node(string property) throw (char *);
+	std::auto_ptr<YAML::Node> get_node(std::string property) throw (char *);
 	
 public:
 	std::string filename;
@@ -22,3 +25,4 @@ public:
 	std::vector<std::string> split(std::string, char = '.');
 };
 
+#endif
