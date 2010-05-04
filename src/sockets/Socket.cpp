@@ -8,6 +8,9 @@
 #include <fcntl.h>
 #include <iostream>
 
+#ifndef SO_NOSIGPIPE
+#define SO_NOSIGPIPE MSG_NOSIGNAL
+#endif
 
 
 Socket::Socket() :
