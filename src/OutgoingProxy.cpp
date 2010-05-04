@@ -1,11 +1,15 @@
-#include "sockets/api.h"
 #include <string>
 #include <iostream>
-#include "config.h"
 #include <vector>
+
+#include "sockets/api.h"
+
+#include "config.h"
 #include "OutgoingProxy.h"
+
+using namespace std;
 	
-OutgoingProxy::OutgoingProxy(int port/*, vector<string> blockedHosts*/) : port(port)  {	
+OutgoingProxy::OutgoingProxy(int port, vector<string> blockedHosts) : port(port), blockedHosts(blockedHosts)  {	
 }
 void OutgoingProxy::run(){
 	std::cout<<"[INFO] Starting..."<<std::endl;
@@ -17,7 +21,7 @@ void OutgoingProxy::run(){
 			server.accept ( sock_server );
 			try{
 				while ( true ){
-					OutgoingProxy::DestinationThread(sock_server/*,v*/);	
+					OutgoingProxy::DestinationThread(sock_server, blockedHosts);	
 				}
 			}
 			catch ( SocketException& ) {
@@ -29,7 +33,7 @@ void OutgoingProxy::run(){
 	}
 }
 	
-void OutgoingProxy::DestinationThread(ServerSocket sock_server/*,vector<string> blockedHosts*/){
+void OutgoingProxy::DestinationThread(ServerSocket sock_server, vector<string> blockedHosts){
 		std::string data;
 		sock_server >> data; //READ FROM ORIGIN
 		//READ FROM VECTOR IF DESTINATION IS VALID

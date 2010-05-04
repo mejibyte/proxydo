@@ -6,10 +6,10 @@
 
 class OutgoingProxy {
 	int port;
-	//vector<string> blockedHosts;
-	void DestinationThread(ServerSocket);
+	std::vector<std::string> blockedHosts;
+	void DestinationThread(ServerSocket, std::vector<std::string>);
 public:
-	OutgoingProxy(int);
+	OutgoingProxy(int,  std::vector<std::string>);
 	void run();
 };
 
