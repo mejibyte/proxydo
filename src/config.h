@@ -4,9 +4,9 @@
 #include <cmath>
 #include <map>
 #include <yaml.h>
-
+#include <iostream>
 class Config {
-	std::auto_ptr<YAML::Node> get_node(string property) throw (char *);
+	std::auto_ptr<YAML::Node> get_node(std::string property) throw (char *);
 	
 public:
 	std::string filename;

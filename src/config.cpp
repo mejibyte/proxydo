@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -91,3 +94,5 @@ vector<string> Config::split(string s, char delimiter) {
 	}
 	return ans;
 }
+
+#endif
