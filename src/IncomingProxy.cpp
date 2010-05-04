@@ -1,7 +1,8 @@
 #include <iostream>
 #include <pthread.h>
-#include "../sockets_api/ClientSocket.h"
-#include "../sockets_api/ServerSocket.h"
+
+#include "sockets/ClientSocket.h"
+#include "sockets/ServerSocket.h"
 #include "IncomingProxy.h"
 #define NUM_THREADS 100
 
