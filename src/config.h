@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef PROXYDO_CONFIG_H
+#define PROXYDO_CONFIG_H
 
 #include <fstream>
 #include <string>
