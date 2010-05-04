@@ -3,7 +3,9 @@
 
 #include "sockets/ClientSocket.h"
 #include "sockets/ServerSocket.h"
+
 #include "IncomingProxy.h"
+
 #define NUM_THREADS 100
 
 IncomingProxy::IncomingProxy(int port) : port (port) {

@@ -1,10 +1,12 @@
-class IncomingProxy {
-  
- private:
-  int port;
+#ifndef INCOMING_PROXY_H
+#define INCOMING_PROXY_H
 
- public:
-  IncomingProxy(int);
-  void run();
+class IncomingProxy {
+	int port;
+
+public:
+	IncomingProxy(int);
+	void run();
 };
-  
+
+#endif
