@@ -5,7 +5,7 @@
 #include <vector>
 #include "OutgoingProxy.h"
 	
-OutgoingProxy::OutgoingProxy(int port/*, vector<string> blockedHosts*/) : port(port) {	
+OutgoingProxy::OutgoingProxy(int port/*, vector<string> blockedHosts*/) : port(port)  {	
 }
 void OutgoingProxy::run(){
 	std::cout<<"[INFO] Starting..."<<std::endl;
