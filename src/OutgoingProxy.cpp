@@ -17,9 +17,7 @@ void OutgoingProxy::run(){
 			ServerSocket sock_server;
 			server.accept ( sock_server );
 			try{
-				while ( true ){
 					OutgoingProxy::DestinationThread(sock_server, blockedHosts);	
-				}
 			}
 			catch ( SocketException& ) {
 			}
@@ -38,7 +36,7 @@ void OutgoingProxy::DestinationThread(ServerSocket sock_server, vector<string> b
 		//GET HOST
 		//GET PORT
 		try{
-	      ClientSocket client_socket ( "google.com",80);
+	      ClientSocket client_socket ( "localhost",80);
 	      try{
 		  client_socket << data;
 		  client_socket >> data;
