@@ -27,32 +27,50 @@ void IncomingProxy::run(){
     }
   }
   catch (SocketException& e)  {
-    cout << "Proxy: "e.description() << endl;
+    cout << "Proxy: " << e.description() << endl;
   }
 }
 
 void IncomingProxy::processConnection(ServerSocket connection) {
   string httpRequest;
   string httpResponse;
-  while (true) {
-    }
-      try {
-        // Connect to web server
-        ClientSocket cs ("localhost", 80);
-        while (true) {
-          // Saves request from client in httpRequest
-          connection >> httpRequest;
-          cout << httpRequest << endl;
-          // Redirect request to Webserver
-          cs << httpRequest;
-          // Saves response from Webserver in httpResponse
-          cs >> httpResponse;
-          // Returns servers response to browser
-          connection << httpResponse;
-          cout << httpResponse << endl;
+  try {
+    // Connect to web server
+    ClientSocket ws ("localhost", 80);
+    //while (true) {
+      // Saves request from client in httpRequest
+      connection >> httpRequest;
+      cout << httpRequest << endl;
+      // Redirect request to Webserver
+      ws << httpRequest;
+      //usleep(200000);
+      int total = (ws + httpResponse);//Getting Response
+      connection << httpResponse;//Sending response to the user
+      cout << httpResponse << endl;
+      while(total>0)
+        {
+          //usleep(5000);
+          total = (ws + httpResponse);
+          if(total > 0)
+            {
+              cout << httpResponse << endl;
+              connection << httpResponse;
+              //  cerr<<data;
+            }
+          else
+            {
+              break;// error reading from socket
+            }
         }
-      }
-      catch (SocketException& e)  {
-        cout << "Client: " << e.description() << endl;
-      }
+      // Saves response from Webserver in httpResponse
+      //ws >> httpResponse;
+      // Returns servers response to browser
+      //connection << httpResponse;
+
+      //}
+  }
+  catch (SocketException& e)  {
+    cout << "Client: " << e.description() << endl;
+  }
+  
 }
