@@ -15,7 +15,7 @@ task :compile do
     raise
   end
   Dir.chdir "src"
-  system "g++ config.cpp main.cpp IncomingProxy.cpp OutgoingProxy.cpp sockets/ClientSocket.cpp sockets/ServerSocket.cpp sockets/Socket.cpp -o ../build/proxydo -I/usr/local/include/yaml-cpp -L/usr/local/lib -lyaml-cpp"
+  system "g++ main.cpp config.cpp util.cpp IncomingProxy.cpp OutgoingProxy.cpp sockets/ClientSocket.cpp sockets/ServerSocket.cpp sockets/Socket.cpp -o ../build/proxydo -I/usr/local/include/yaml-cpp -L/usr/local/lib -lyaml-cpp"
   puts "Everything compiled to /build"
   Dir.chdir ".."
 end

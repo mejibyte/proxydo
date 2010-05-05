@@ -27,18 +27,11 @@ int main(){
 		    cout << i->first << ", " << i->second << endl;
 		*/
 		if(config.get_bool("outgoing.enabled"))		
-			if(fork()){
-				//GET BLOCKED OUTGOING HOSTS
-				vector<string> v = config.get_vector_string("outgoing.block");
-				cout << "outgoing.block:" << endl;
-				for (int i = 0; i < v.size(); ++i)
-					cout << v[i] << endl;
-				//GET OUTGOING PORT
-				int Oport = config.get_int("outgoing.port");
-				//CREATES OUTGOING PROXY
-				//OutgoingProxy OP(Oport,v);
+			if(fork() == 0){
+				OutgoingProxy op(config.get_int("outgoing.port"), config.get_vector_string("outgoing.block"));
+				op.run();
+				exit(0);
 			}
-			
 		if(config.get_bool("incoming.enabled"))		
 			if(fork()){
 				int Iport = config.get_int("ingoing.port");

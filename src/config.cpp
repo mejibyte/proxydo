@@ -10,6 +10,7 @@
 using namespace std;
 
 #include "config.h"
+#include "util.h"
 
 Config::Config(string filename) : filename(filename) {
 	cout << "# Initializing configuration file: " << filename << endl;
@@ -25,7 +26,7 @@ std::auto_ptr<YAML::Node> Config::get_node(string property) throw (char *){
 	if (!parser.GetNextDocument(doc)){
 		throw "Can not parse configuration file";
 	}
-	vector<string> path = split(property);
+	vector<string> path = util::split(property);
 	std::auto_ptr<YAML::Node> node = doc.Clone();
 
 	for (int i = 0; i < path.size(); ++i){
@@ -77,22 +78,6 @@ map<string, string> Config::get_map_string_string(string property){
 		ans[key] = value;
 	}
 	return ans;	
-}
-
-// Splits s by delimiter, and returns a vector with all the parts.
-vector<string> Config::split(string s, char delimiter) {
-	s += delimiter;
-	vector<string> ans;
-	string t = "";
-	for (int i = 0; i < s.size(); ++i){
-		if (s[i] == delimiter){
-			ans.push_back(t);
-			t = "";
-		}else{
-			t += s[i];
-		}
-	}
-	return ans;
 }
 
 #endif

@@ -2,50 +2,63 @@
 
 #include "sockets/api.h"
 
-#include "config.h"
 #include "OutgoingProxy.h"
+#include "config.h"
+#include "util.h"
 
 using namespace std;
-	
-OutgoingProxy::OutgoingProxy(int port, vector<string> blockedHosts) : port(port), blockedHosts(blockedHosts)  {	
+
+OutgoingProxy::OutgoingProxy(int port, vector<string> blockedHosts) : port(port), blockedHosts(blockedHosts) {
+	cout << "# [Outgoing] Initializing outgoing proxy:" << endl;	
+	cout << "# [Outgoing]      Port: " << port << endl;
+	cout << "# [Outgoing]      Blocked hosts:" << endl;
+	for (int i = 0; i < blockedHosts.size(); ++i){
+		cout << "# [Outgoing]          " << blockedHosts[i] << endl;
+	}
 }
 void OutgoingProxy::run(){
-	std::cout<<"[INFO] Starting..."<<std::endl;
-	try{
-		ServerSocket server (port);
-		while ( true ){			
-			ServerSocket sock_server;
-			server.accept ( sock_server );
-			try{
-					OutgoingProxy::DestinationThread(sock_server, blockedHosts);	
-			}
-			catch ( SocketException& ) {
-			}
+	try {
+		ServerSocket socket(port);
+		cout << "# [Outgoing] Binding socket on port " << port << endl;
+		while (true){			
+			ServerSocket connection;
+			cout << "# [Outgoing] Accepting connections on port " << port << "..." << endl;
+			socket.accept ( connection );
+			cout << "# [Outgoing] Connection received" << endl;
+			OutgoingProxy::DestinationThread(connection);	
 		}
 	}
 	catch ( SocketException& e ){
-		std::cout << "[EXCEPTION] " << e.description() << "\n[INFO] Closing...\n";
+		cout << "# [Outgoing] Exception: " << e.description() << endl;		
 	}
 }
-	
-void OutgoingProxy::DestinationThread(ServerSocket sock_server, vector<string> blockedHosts){
-		std::string data;
-		sock_server >> data; //READ FROM ORIGIN
-		//READ FROM VECTOR IF DESTINATION IS VALID
-		std::cout << "[MESSAGE] " <<data<<std::endl; //MESSAGE
-		//GET HOST
-		//GET PORT
-		try{
-	      ClientSocket client_socket ( "localhost",80);
-	      try{
-		  client_socket << data;
-		  client_socket >> data;
-		}
-	      catch ( SocketException& ) {}
-	      std::cout << "We received this response from the server:\n\"" << data << "\"\n";;
-	    }
-	  catch ( SocketException& e ){
-	     std::cout << "Exception was caught:" << e.description() << "\n";
-	    }
-		sock_server << data; //WRITE TO ORIGIN
+
+void OutgoingProxy::DestinationThread(ServerSocket &connection){
+	try {
+		string data;
+		connection >> data;
+
+		cout << "# [Outgoing] Received request from client:" << endl;
+		cout << data << endl;
+		cout << "# [Outgoing] About to redirect the request to the server" << endl;	
+
+		map<string, string> headers = util::extractHeaders(data);
+		//extract host
+		
+		ClientSocket remote("www.google.com.co", 80);
+		remote << data;
+		
+		string reply;
+		remote >> reply;
+		
+		cout << reply << endl;
+		
+		connection << reply;
+
+		remote.~ClientSocket();
+		connection.~ServerSocket();
+	}
+	catch (SocketException& e){
+		cout << "# [Outgoing] Exception: " << e.description() << endl;				
+	}
 }

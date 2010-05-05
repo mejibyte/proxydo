@@ -7,7 +7,7 @@
 class OutgoingProxy {
 	int port;
 	std::vector<std::string> blockedHosts;
-	void DestinationThread(ServerSocket, std::vector<std::string>);
+	void DestinationThread(ServerSocket&);
 public:
 	OutgoingProxy(int,  std::vector<std::string>);
 	void run();

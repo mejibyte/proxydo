@@ -22,7 +22,6 @@ public:
 	std::vector<std::string> get_vector_string(std::string);
 	std::map<std::string, std::string> get_map_string_string(std::string);
 	
-	std::vector<std::string> split(std::string, char = '.');
 };
 
 #endif

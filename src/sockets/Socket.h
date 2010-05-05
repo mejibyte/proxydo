@@ -13,9 +13,9 @@
 #include <arpa/inet.h>
 
 
-const int MAXHOSTNAME = 200;
+const int MAXHOSTNAME = 256;
 const int MAXCONNECTIONS = 5;
-const int MAXRECV = 500;
+const int MAXRECV = 1024 * 8; //8kb
 
 class Socket
 {

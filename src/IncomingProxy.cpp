@@ -27,7 +27,7 @@ void IncomingProxy::run(){
     }
   }
   catch (SocketException& e)  {
-    cout << "Proxy: "e.description() << endl;
+    cout << "Proxy: " << e.description() << endl;
   }
 }
 
