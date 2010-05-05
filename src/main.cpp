@@ -26,7 +26,7 @@ int main(){
 		for (map<string, string>::iterator i = m.begin(); i != m.end(); ++i)
 		    cout << i->first << ", " << i->second << endl;
 		*/
-		if(config.get_bool("outgoing.enable"))		
+		if(config.get_bool("outgoing.enabled"))		
 			if(fork()){
 				//GET BLOCKED OUTGOING HOSTS
 				vector<string> v = config.get_vector_string("outgoing.block");
@@ -39,7 +39,7 @@ int main(){
 				//OutgoingProxy OP(Oport,v);
 			}
 			
-		if(config.get_bool("incoming.enable"))		
+		if(config.get_bool("incoming.enabled"))		
 			if(fork()){
 				int Iport = config.get_int("ingoing.port");
 				//IngoingProxy IP(Iport);
