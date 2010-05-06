@@ -30,46 +30,20 @@ void OutgoingProxy::run(){
 		ServerSocket socket(port);
 		cout << "# [Outgoing] Binding socket on port " << port << endl;
 		while (true){	
-			if (!socket.is_valid()) socket = ServerSocket(port);
-			ServerSocket * connection = new ServerSocket();
+			ServerSocket connection;
 			cout << "# [Outgoing] Accepting connections on port " << port << "..." << endl;
-			socket.accept ( *connection );
+			socket.accept ( connection );
 			cout << "# [Outgoing] Accepted connection" << endl;
-			OutgoingProxy::createThread(*connection);
+			if (fork() == 0){
+		     	OutgoingProxy::handleConnection(connection);
+				exit(0);				
+     		}
 		}
 	}
 	catch ( SocketException& e ){
 		cout << "# [Outgoing] Exception: " << e.description() << endl;		
 	}
 }
-
-struct ThreadParameters{
-	OutgoingProxy proxy;
-	ServerSocket connection;
-};
-
-void * runThread(void * arg){
-	try {
-		ThreadParameters * params = (ThreadParameters *)arg;
-		cout << "# [Outgoing] Hello. I'm a thread and I must handle a new connection" << endl;
-		params->proxy.handleConnection(params->connection);
-    	delete params;		
-	} catch (SocketException &e){
-		cout << "# [Outgoing] Exception in thread: " << e.description() << endl;
-	}
-	cout << "# [Outgoing] Terminating thread" << endl;
-	pthread_exit(NULL);
-}
-
-void OutgoingProxy::createThread(ServerSocket &connection){
-	cout << "# [Outgoing] Creating thread to handle new connection" << endl;
-	pthread_t thread;
-	ThreadParameters * p = new ThreadParameters();
-	p->proxy = OutgoingProxy(*this);
-	p->connection = connection;
-	pthread_create(&thread, NULL, runThread, (void *)p);
-}
-
 
 void OutgoingProxy::handleConnection(ServerSocket &connection){
 	try {
