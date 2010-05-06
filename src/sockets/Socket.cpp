@@ -172,13 +172,13 @@ int Socket::recv(char * buffer, int size) const {
 std::string Socket::readLine() const {
 	char buf[MAXRECV + 1];
 	std::string answer = "";
-	
+
 	while (true){
 		//Peek at the socket, to see if we have a nearby end of line.
 		memset(buf, 0, MAXRECV + 1);
 		int length = ::recv(m_sock, buf, MAXRECV, MSG_PEEK);
 		if (length <= 0){
-	      throw SocketException ( "Could not read from socket." );
+			throw SocketException ( "Could not read from socket." );
 		}
 		char * end = (char *) memchr(buf, '\n', length); //Try to find a \n
 		if (end == NULL){
@@ -186,7 +186,7 @@ std::string Socket::readLine() const {
 			memset(buf, 0, MAXRECV + 1);
 			length = ::recv(m_sock, buf, MAXRECV, 0);
 			if (length <= 0){
-		      throw SocketException ( "Could not read from socket." );
+				throw SocketException ( "Could not read from socket." );
 			}			
 			answer += buf;
 			continue;
@@ -196,7 +196,7 @@ std::string Socket::readLine() const {
 			memset(buf, 0, MAXRECV + 1);
 			length = ::recv(m_sock, buf, must_read, 0);
 			if (length <= 0){
-		      throw SocketException ( "Could not read from socket." );
+				throw SocketException ( "Could not read from socket." );
 			}			
 			answer += buf;
 			break;
@@ -206,13 +206,19 @@ std::string Socket::readLine() const {
 }
 
 
-bool Socket::connect ( const std::string host, const int port )
+bool Socket::connect (std::string host, const int port )
 {
 	if ( ! is_valid() ) return false;
 
 	m_addr.sin_family = AF_INET;
 	m_addr.sin_port = htons ( port );
 
+	for (int i = 0; i < host.size(); ++i){
+		if (!isdigit(host[i]) and host[i] != '.'){
+			host = hostname_to_IP(host);
+			break;
+		}
+	}
 	int status = inet_pton ( AF_INET, host.c_str(), &m_addr.sin_addr );
 
 	if ( errno == EAFNOSUPPORT ) return false;
@@ -247,3 +253,24 @@ void Socket::set_non_blocking ( const bool b )
 		F_SETFL,opts );
 
 }
+
+std::string Socket::hostname_to_IP(std::string hostname) const {
+	struct addrinfo hints, *res;
+	struct in_addr addr;
+	int err;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_family = AF_INET;
+
+	if ((err = getaddrinfo(hostname.c_str(), NULL, &hints, &res)) != 0) {
+		throw SocketException ("Error resolving hostname: " + hostname);
+	}
+
+	addr.s_addr = ((struct sockaddr_in *)(res->ai_addr))->sin_addr.s_addr;
+
+	std::string answer = inet_ntoa(addr);
+	freeaddrinfo(res);
+	return answer;
+}
+

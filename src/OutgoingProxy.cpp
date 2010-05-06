@@ -35,7 +35,6 @@ void OutgoingProxy::run(){
 
 void OutgoingProxy::DestinationThread(ServerSocket &connection){
 	try {
-
 		string header = "";
 		while (true){
 			string s = connection.readLine();
@@ -45,9 +44,7 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 		}
 
 		map<string, string> headers = util::extractHeaders(header);
-		//extract host
-
-		ClientSocket remote("74.125.67.103", 80);
+		ClientSocket remote(headers["Host"], 80);
 		remote << header;
 		
 		cout << header;
@@ -64,7 +61,7 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 			remote.send(buf, length);
 		}
 
-		//get the headers replied by the server the server
+		//get the headers replied by the server
 		header = "";
 		while (true){
 			string s = remote.readLine();
@@ -90,8 +87,12 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 				connection << s;
 				if (s == "\n" or s == "\r\n") break;
 			}
+		}else{ //read until the server closes the connection
+			while (true){
+				length = remote.recv(buf, MAXRECV);
+				connection.send(buf, length);
+			}			
 		}
-
 
 		remote.~ClientSocket();
 		connection.~ServerSocket();

@@ -39,14 +39,16 @@ class Socket
   int recv(char * buffer, int size) const;
   std::string readLine() const;
 
+  // Utilities
+  std::string hostname_to_IP(std::string hostname) const;
 
   void set_non_blocking ( const bool );
 
   bool is_valid() const { return m_sock != -1; }
 
-  int m_sock;
+  
  private:
-
+  int m_sock;
   sockaddr_in m_addr;
 
 
