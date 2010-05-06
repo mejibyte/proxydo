@@ -21,9 +21,8 @@ void IncomingProxy::run(){
       ServerSocket connection;
       proxy.accept(connection);
 
-      while (true) {
+      proxy.~ServerSocket();
       processConnection(connection);
-      }
     }
   }
   catch (SocketException& e)  {
@@ -34,51 +33,46 @@ void IncomingProxy::run(){
 void IncomingProxy::processConnection(ServerSocket connection) {
   string httpRequest;
   string httpResponse;
+  string trash;
+  while (true) {
   try {
     // Connect to web server
+    // Reading REQUEST from Browser
+    // Saves request from client in httpRequest
+    connection >> httpRequest;
+    cout << httpRequest << endl;
+    // Sending request to Webserver
+    //ws << httpRequest;
     ClientSocket ws ("localhost", 80);
-    //while (true) {
-      // Saves request from client in httpRequest
-    int totalreq = connection + httpRequest;
     ws << httpRequest;
-    while (totalreq>0) {
-      totalreq = connection + httpRequest;
-      cout << httpRequest << endl;
-      if (totalreq>0) {
-        // Redirect request to Webserver
-        ws << httpRequest;
-      } else {
-        break;
-      }
-    }
-      //usleep(200000);
-      int total = (ws + httpResponse);//Getting Response
-      connection << httpResponse;//Sending response to the user
-      cout << httpResponse << endl;
-      while(total>0)
-        {
-          //usleep(5000);
-          total = (ws + httpResponse);
-          if(total > 0)
-            {
-              cout << httpResponse << endl;
+    usleep(20000);
+    // Saving server response in httpResponse
+    //int total = (ws + httpResponse); //Getting Response
+    //cout << "Total bytes: " << total << endl;
+    //connection << httpResponse; //Sending response to the user
+    //cout << httpResponse << endl;
+    int total = 1;
+    while(total>0)
+      {
+        total = (ws + httpResponse);
+        cout << "Total in " << total << endl;
+        if(total > 0)
+          {
+            cout << httpResponse << endl;
+            while (true)
               connection << httpResponse;
-              //  cerr<<data;
-            }
-          else
-            {
-              break;// error reading from socket
-            }
+          }
+        else
+          {
+            break;// error reading from socket
+          }
         }
-      // Saves response from Webserver in httpResponse
-      //ws >> httpResponse;
-      // Returns servers response to browser
-      //connection << httpResponse;
-
-      //}
+    connection.~ServerSocket();
+    ws.~ClientSocket();
+      //exit(0);
   }
   catch (SocketException& e)  {
     cout << "Client: " << e.description() << endl;
   }
-  
+  }
 }

@@ -58,7 +58,7 @@ void ServerSocket::accept ( ServerSocket& sock )
     }
 }
 
-int ServerSocket::operator + ( std::string& s ) const
+int ServerSocket::operator - ( std::string& s ) const
 {
   int total;
   if ( ! (total = Socket::recv ( s )) )
