@@ -46,7 +46,7 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 		map<string, string> headers = util::extractHeaders(header);
 		ClientSocket remote(headers["Host"], 80);
 		remote << header;
-		
+
 		cout << header;
 
 		char buf[MAXRECV];
@@ -81,17 +81,29 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 				must_send -= length;
 				connection.send(buf, length);
 			}
-		}else if (headers["Transfer-Encoding"] == "chunked"){
+		}
+		else if (headers["Transfer-Encoding"] == "chunked"){
 			while (true){
+				int chunk_size, must_read;
 				string s = remote.readLine();
+				sscanf(s.c_str(), "%x", &chunk_size);
 				connection << s;
-				if (s == "\n" or s == "\r\n") break;
+				must_read = 0;
+				while (must_read > 0){
+					int read = remote.recv(buf, min(must_read, MAXRECV));
+					must_read -= read;
+					connection.send(buf, read);
+				}
+				s = remote.readLine();
+				connection << s;
+				if (chunk_size == 0) break;
 			}
+
 		}else{ //read until the server closes the connection
-			while (true){
-				length = remote.recv(buf, MAXRECV);
-				connection.send(buf, length);
-			}			
+			//while (true){
+				//length = remote.recv(buf, MAXRECV);
+				//connection.send(buf, length);
+			//}
 		}
 
 		remote.~ClientSocket();
