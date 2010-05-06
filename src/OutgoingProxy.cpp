@@ -16,16 +16,26 @@ OutgoingProxy::OutgoingProxy(int port, vector<string> blockedHosts) : port(port)
 		cout << "# [Outgoing]          " << blockedHosts[i] << endl;
 	}
 }
+
+OutgoingProxy::OutgoingProxy(const OutgoingProxy &other){
+	port = other.port;
+	blockedHosts = other.blockedHosts;
+}
+
+OutgoingProxy::OutgoingProxy() : port(8080) {
+}
+
 void OutgoingProxy::run(){
 	try {
 		ServerSocket socket(port);
 		cout << "# [Outgoing] Binding socket on port " << port << endl;
-		while (true){			
-			ServerSocket connection;
+		while (true){	
+			if (!socket.is_valid()) socket = ServerSocket(port);
+			ServerSocket * connection = new ServerSocket();
 			cout << "# [Outgoing] Accepting connections on port " << port << "..." << endl;
-			socket.accept ( connection );
-			cout << "# [Outgoing] Connection received" << endl;
-			OutgoingProxy::DestinationThread(connection);	
+			socket.accept ( *connection );
+			cout << "# [Outgoing] Accepted connection" << endl;
+			OutgoingProxy::createThread(*connection);
 		}
 	}
 	catch ( SocketException& e ){
@@ -33,7 +43,35 @@ void OutgoingProxy::run(){
 	}
 }
 
-void OutgoingProxy::DestinationThread(ServerSocket &connection){
+struct ThreadParameters{
+	OutgoingProxy proxy;
+	ServerSocket connection;
+};
+
+void * runThread(void * arg){
+	try {
+		ThreadParameters * params = (ThreadParameters *)arg;
+		cout << "# [Outgoing] Hello. I'm a thread and I must handle a new connection" << endl;
+		params->proxy.handleConnection(params->connection);
+    	delete params;		
+	} catch (SocketException &e){
+		cout << "# [Outgoing] Exception in thread: " << e.description() << endl;
+	}
+	cout << "# [Outgoing] Terminating thread" << endl;
+	pthread_exit(NULL);
+}
+
+void OutgoingProxy::createThread(ServerSocket &connection){
+	cout << "# [Outgoing] Creating thread to handle new connection" << endl;
+	pthread_t thread;
+	ThreadParameters * p = new ThreadParameters();
+	p->proxy = OutgoingProxy(*this);
+	p->connection = connection;
+	pthread_create(&thread, NULL, runThread, (void *)p);
+}
+
+
+void OutgoingProxy::handleConnection(ServerSocket &connection){
 	try {
 		string header = "";
 		while (true){
@@ -87,30 +125,18 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 				int chunk_size, must_read;
 				string s = remote.readLine();
 				sscanf(s.c_str(), "%x", &chunk_size);
-				cout << "s = " << s << endl;
-				cout << "chunk_size = " << chunk_size << endl;
 				connection.send(s.c_str(), s.size());
 
 				must_read = chunk_size;
-				cout << "Before reading, must read = " << must_read << endl;
 				while (must_read > 0){
-					cout << "must read = " << must_read << endl;
 					int read = remote.recv(buf, min(must_read, MAXRECV));
 					must_read -= read;
 					connection.send(buf, read);
-					cout << buf;
 				}
 				s = remote.readLine();
 				connection << s;
-				cout << s;
 				if (chunk_size == 0) break;
 			}
-
-		}else{ //read until the server closes the connection
-			//while (true){
-				//length = remote.recv(buf, MAXRECV);
-				//connection.send(buf, length);
-			//}
 		}
 
 		remote.~ClientSocket();

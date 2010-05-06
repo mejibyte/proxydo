@@ -5,11 +5,15 @@
 #include "sockets/api.h"
 
 class OutgoingProxy {
-	int port;
 	std::vector<std::string> blockedHosts;
-	void DestinationThread(ServerSocket&);
+	void createThread(ServerSocket&);
+	
 public:
+	int port;	
 	OutgoingProxy(int,  std::vector<std::string>);
+	OutgoingProxy(const OutgoingProxy &other);
+	OutgoingProxy();
+	void handleConnection(ServerSocket&);		
 	void run();
 };
 
