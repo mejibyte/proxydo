@@ -45,6 +45,17 @@ void OutgoingProxy::run(){
 	}
 }
 
+bool OutgoingProxy::checkBlockedHost(string host, ServerSocket &connection){
+	for (int i = 0; i < blockedHosts.size(); ++i){
+		if (host.find(blockedHosts[i]) != string::npos){
+			string reply = "<html><body>Blocked by Proxydo</body></html>";			
+			connection << "HTTP/1.1 200 OK\r\n\r\n" << reply; 			
+			return true;
+		}
+	}
+	return false;
+}
+
 void OutgoingProxy::handleConnection(ServerSocket &connection){
 	try {
 		string header = "";
@@ -56,6 +67,9 @@ void OutgoingProxy::handleConnection(ServerSocket &connection){
 		}
 
 		map<string, string> headers = util::extractHeaders(header);
+		
+		if (checkBlockedHost(headers["Host"], connection)) throw SocketException("Blocked host");
+		
 		ClientSocket remote(headers["Host"], 80);
 		remote << header;
 
