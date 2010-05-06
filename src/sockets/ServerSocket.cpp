@@ -57,3 +57,14 @@ void ServerSocket::accept ( ServerSocket& sock )
       throw SocketException ( "Could not accept socket." );
     }
 }
+
+int ServerSocket::operator + ( std::string& s ) const
+{
+  int total;
+  if ( ! (total = Socket::recv ( s )) )
+    {
+      throw SocketException ( "Could not read from socket." );
+    }
+
+  return total;
+}

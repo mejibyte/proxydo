@@ -39,10 +39,18 @@ void IncomingProxy::processConnection(ServerSocket connection) {
     ClientSocket ws ("localhost", 80);
     //while (true) {
       // Saves request from client in httpRequest
-      connection >> httpRequest;
+    int totalreq = connection + httpRequest;
+    ws << httpRequest;
+    while (totalreq>0) {
+      totalreq = connection + httpRequest;
       cout << httpRequest << endl;
-      // Redirect request to Webserver
-      ws << httpRequest;
+      if (totalreq>0) {
+        // Redirect request to Webserver
+        ws << httpRequest;
+      } else {
+        break;
+      }
+    }
       //usleep(200000);
       int total = (ws + httpResponse);//Getting Response
       connection << httpResponse;//Sending response to the user
