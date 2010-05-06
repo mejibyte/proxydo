@@ -23,8 +23,7 @@ ServerSocket::ServerSocket ( int port )
 
 }
 
-ServerSocket::~ServerSocket()
-{
+ServerSocket::~ServerSocket(){
 }
 
 

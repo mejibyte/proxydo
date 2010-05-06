@@ -35,15 +35,18 @@ class Socket
   // Data Transimission
   bool send ( const std::string ) const;
   int recv ( std::string& ) const;
+  int send (char * buffer, int size) const;
+  int recv(char * buffer, int size) const;
+  std::string readLine() const;
 
 
   void set_non_blocking ( const bool );
 
   bool is_valid() const { return m_sock != -1; }
 
+  int m_sock;
  private:
 
-  int m_sock;
   sockaddr_in m_addr;
 
 

@@ -35,30 +35,71 @@ void OutgoingProxy::run(){
 
 void OutgoingProxy::DestinationThread(ServerSocket &connection){
 	try {
-		string data;
-		connection >> data;
 
-		cout << "# [Outgoing] Received request from client:" << endl;
-		cout << data << endl;
-		cout << "# [Outgoing] About to redirect the request to the server" << endl;	
+		string header = "";
+		while (true){
+			string s = connection.readLine();
+			if (s.find("Accept-Encoding") == 0) continue;
+			header += s;
+			if (s == "\n" or s == "\r\n") break;
+		}
 
-		map<string, string> headers = util::extractHeaders(data);
+		map<string, string> headers = util::extractHeaders(header);
 		//extract host
+
+		ClientSocket remote("74.125.67.103", 80);
+		remote << header;
 		
-		ClientSocket remote("www.google.com.co", 80);
-		remote << data;
-		
-		string reply;
-		remote >> reply;
-		
-		cout << reply << endl;
-		
-		connection << reply;
+		cout << header;
+
+		char buf[MAXRECV];
+		int length;
+
+		//Send the body of the request
+		int must_send = 0;
+		if (headers.count("Content-Length")) must_send = util::toInt(headers["Content-Length"]);
+		while (must_send > 0){
+			length = connection.recv(buf, MAXRECV);
+			must_send -= length;
+			remote.send(buf, length);
+		}
+
+		//get the headers replied by the server the server
+		header = "";
+		while (true){
+			string s = remote.readLine();
+			header += s;
+			if (s == "\n" or s == "\r\n") break;
+		}
+
+		cout << header;
+		connection << header;
+
+		headers = util::extractHeaders(header);
+		//Send the body replied by the server.
+		if (headers.count("Content-Length")){
+			must_send = util::toInt(headers["Content-Length"]);
+			while (must_send > 0){
+				length = remote.recv(buf, MAXRECV);
+				must_send -= length;
+				connection.send(buf, length);
+			}
+		}else if (headers["Transfer-Encoding"] == "chunked"){
+			while (true){
+				string s = remote.readLine();
+				connection << s;
+				if (s == "\n" or s == "\r\n") break;
+			}
+		}
+
 
 		remote.~ClientSocket();
 		connection.~ServerSocket();
 	}
 	catch (SocketException& e){
 		cout << "# [Outgoing] Exception: " << e.description() << endl;				
+	}
+	catch (char * s){
+		cout << "# [Outgoing] Exception: " << s << endl;						
 	}
 }

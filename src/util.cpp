@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cctype>
+#include <sstream>
 
 #include "util.h"
 
@@ -11,7 +12,7 @@ using namespace std;
 map<string, string> util::extractHeaders(const string &data) throw (char *){
 	map<string, string> answer;
 	int len = data.find(CRLF + CRLF);
-	
+	if (len == string::npos) len = data.find(LF + LF);	
 	if (len == string::npos){
 		throw "Invalid data. Cannot find end of headers.";
 	}
@@ -52,4 +53,12 @@ vector<string> util::split(string s, char delimiter) {
 		}
 	}
 	return ans;
+}
+
+
+int util::toInt(string s){
+	stringstream sin(s);
+	int x;
+	sin >> x;
+	return x;
 }

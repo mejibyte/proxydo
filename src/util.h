@@ -6,12 +6,14 @@
 #include <vector>
 
 namespace util {
-	const char CR = 13;
-	const char LF = 10;
-	const std::string CRLF = "\x0D\x0A";
+	const char CR = '\r';
+	const char LF = '\n';
+	const std::string CRLF = "\r\n";
 	
 	std::vector<std::string> split(std::string s, char delimiter = '.');
 	std::string strip(std::string s);
+	
+	int toInt(std::string s);
 
 	std::map<std::string, std::string> extractHeaders(const std::string &data) throw (char *);
 	

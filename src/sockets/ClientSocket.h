@@ -6,7 +6,7 @@
 #include "Socket.h"
 
 
-class ClientSocket : private Socket
+class ClientSocket : public Socket
 {
  public:
 
