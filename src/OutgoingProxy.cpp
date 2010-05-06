@@ -87,15 +87,22 @@ void OutgoingProxy::DestinationThread(ServerSocket &connection){
 				int chunk_size, must_read;
 				string s = remote.readLine();
 				sscanf(s.c_str(), "%x", &chunk_size);
-				connection << s;
-				must_read = 0;
+				cout << "s = " << s << endl;
+				cout << "chunk_size = " << chunk_size << endl;
+				connection.send(s.c_str(), s.size());
+
+				must_read = chunk_size;
+				cout << "Before reading, must read = " << must_read << endl;
 				while (must_read > 0){
+					cout << "must read = " << must_read << endl;
 					int read = remote.recv(buf, min(must_read, MAXRECV));
 					must_read -= read;
 					connection.send(buf, read);
+					cout << buf;
 				}
 				s = remote.readLine();
 				connection << s;
+				cout << s;
 				if (chunk_size == 0) break;
 			}
 

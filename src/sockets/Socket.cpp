@@ -151,15 +151,17 @@ int Socket::recv ( std::string& s ) const
 	}
 }
 
-int Socket::send (char * buffer, int size) const{
+int Socket::send (const char * buffer, int size) const{
 	int status = ::send ( m_sock, buffer, size, SO_NOSIGPIPE );
-	return status;
+	if (status < 0){
+		throw SocketException("Error while writing to socket");
+	}
 }
 
 
 int Socket::recv(char * buffer, int size) const {
-	memset ( buffer, 0, size );
-	int status = ::recv ( m_sock, buffer, size - 1, 0 );
+	memset ( buffer, 0, size + 1 );
+	int status = ::recv ( m_sock, buffer, size, 0 );
 	if ( status == -1 and errno != EAGAIN){
 		//std::cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
 		throw SocketException ("Error while receiving");

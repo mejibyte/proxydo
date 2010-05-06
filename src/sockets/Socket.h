@@ -35,7 +35,7 @@ class Socket
   // Data Transimission
   bool send ( const std::string ) const;
   int recv ( std::string& ) const;
-  int send (char * buffer, int size) const;
+  int send (const char * buffer, int size) const;
   int recv(char * buffer, int size) const;
   std::string readLine() const;
 
