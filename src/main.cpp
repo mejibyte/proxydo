@@ -10,7 +10,7 @@ using namespace std;
 
 vector<int> forks;
 
-void sig_handler(int signal){
+void sig_int(int signal){
 	if (signal == SIGINT){
 		cout << "# Received SIGINT signal. Killing forks:" << endl;
 		for (int i = 0; i < forks.size(); ++i){
@@ -21,9 +21,16 @@ void sig_handler(int signal){
 	}
 }
 
+void sig_chld(int signal){
+	if (signal == SIGCHLD){
+		while (waitpid(-1, NULL, WNOHANG) > 0);
+	}
+}
+
 int main(){
 	cout << "# Starting up Proxydo" << endl;
-	signal(SIGINT, sig_handler);
+	signal(SIGINT, sig_int);
+	signal(SIGCHLD, sig_chld);
 	
 	Config config("config.yml");
 	try {
