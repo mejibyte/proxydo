@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <string>
+#include <set>
 #include <arpa/inet.h>
 
 
@@ -46,6 +47,9 @@ class Socket
 
   bool is_valid() const { return m_sock != -1; }
 
+  static int relay_connection(const Socket &from, const Socket &to, int timeout = 30);
+
+protected:
   int m_sock;  
  private:
   sockaddr_in m_addr;

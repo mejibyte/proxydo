@@ -276,3 +276,32 @@ std::string Socket::hostname_to_IP(std::string hostname) const {
 	return answer;
 }
 
+int Socket::relay_connection(const Socket &from, const Socket &to, int timeout){
+	char buf[MAXRECV + 1];
+	int length;
+	while (true){
+		int incoming = from.m_sock, outgoing = to.m_sock;
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		FD_SET(incoming, &rfds);
+		FD_SET(outgoing, &rfds);
+		timeval tv;
+		tv.tv_sec = timeout;
+		tv.tv_usec = 0;
+		int ready = select(std::max(incoming, outgoing) + 1, &rfds, NULL, NULL, &tv);
+		if (ready <= 0){
+			return ready;
+		}
+
+		if (FD_ISSET(incoming, &rfds)){
+			length = from.recv(buf, MAXRECV);
+			if (length <= 0) break;
+			to.send(buf, length);
+		}else if (FD_ISSET(outgoing, &rfds)){
+			length = to.recv(buf, MAXRECV);
+			if (length <= 0) break;
+			from.send(buf, length);
+		}
+	}
+	return 1;
+}
