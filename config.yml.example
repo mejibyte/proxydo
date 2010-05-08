@@ -11,7 +11,7 @@ outgoing:
 # Configuration for the incoming proxy. That is, petitions that come from
 # the internet to inside our LAN.
 incoming:
-   enabled: no
+   enabled: yes
    port: 80
    map:
         portal1/: 200.180.105.3:80

@@ -1,78 +1,69 @@
 #include <iostream>
-#include <pthread.h>
-#include <string.h>
+#include <set>
+#include <cstdlib>
+
 #include "sockets/api.h"
-#include "sockets/ServerSocket.h"
+
 #include "IncomingProxy.h"
-
-#define NUM_THREADS 100
-
-IncomingProxy::IncomingProxy(int port) : port (port) {
-}
+#include "config.h"
+#include "util.h"
 
 using namespace std;
 
+IncomingProxy::IncomingProxy(int port) : port (port) {
+	cout << "# [Incoming] Initializing incoming proxy:" << endl;	
+	cout << "# [Incoming]      Port: " << port << endl;
+}
+
 void IncomingProxy::run(){
   try {
-    // Port where proxy runs
     ServerSocket proxy(port);
+    cout << "# [Incoming] Binding socket on port " << port << endl;
     while (true) {
-      // Connection with the client
       ServerSocket connection;
+      cout << "# [Incoming] Accepting connections on port " << port << "..." << endl;
       proxy.accept(connection);
+      cout << "# [Incoming] Accepted connection" << endl;
 
-      proxy.~ServerSocket();
-      processConnection(connection);
+      if (fork() == 0){
+        IncomingProxy::handleConnection(connection);
+        exit(0);
+      }
     }
   }
   catch (SocketException& e)  {
-    cout << "Proxy: " << e.description() << endl;
+    cout << "# [Incoming] Exception: " << e.description() << endl;		
   }
 }
 
-void IncomingProxy::processConnection(ServerSocket connection) {
-  string httpRequest;
-  string httpResponse;
-  string trash;
-  while (true) {
+void IncomingProxy::handleConnection(ServerSocket &connection) {
   try {
-    // Connect to web server
-    // Reading REQUEST from Browser
-    // Saves request from client in httpRequest
-    connection >> httpRequest;
-    cout << httpRequest << endl;
-    // Sending request to Webserver
-    //ws << httpRequest;
-    ClientSocket ws ("localhost", 80);
-    ws << httpRequest;
-    usleep(20000);
-    // Saving server response in httpResponse
-    //int total = (ws + httpResponse); //Getting Response
-    //cout << "Total bytes: " << total << endl;
-    //connection << httpResponse; //Sending response to the user
-    //cout << httpResponse << endl;
-    int total = 1;
-    while(total>0)
-      {
-        total = (ws + httpResponse);
-        cout << "Total in " << total << endl;
-        if(total > 0)
-          {
-            cout << httpResponse << endl;
-            while (true)
-              connection << httpResponse;
-          }
-        else
-          {
-            break;// error reading from socket
-          }
-        }
+    string header = connection.readLine();
+    header += "Connection: close\r\n";
+    while (true) {
+      string s = connection.readLine();
+      if (s.find("Connection") == 0) continue;
+      header += s;
+      if (s == "\n" or s == "\r\n") break;
+    }
+
+    //map<string, string> headers = util::extractHeaders(header);
+
+    //ClientSocket webserver(headers["Host"], 80);
+    ClientSocket webserver("www.google.com", 80);
+    webserver << header;
+    cout << header;
+    
+    Socket::relay_connection(connection, webserver);
+
+    webserver.~ClientSocket();
     connection.~ServerSocket();
-    ws.~ClientSocket();
-      //exit(0);
+
   }
   catch (SocketException& e)  {
-    cout << "Client: " << e.description() << endl;
+    cout << "# [Incoming] Exception: " << e.description() << endl;
   }
+  catch (char * s){
+    cout << "# [Incoming] Exception: " << s << endl;						
   }
 }

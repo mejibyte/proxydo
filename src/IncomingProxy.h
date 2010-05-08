@@ -3,7 +3,7 @@
 #include "sockets/api.h"
 class IncomingProxy {
 	int port;
-        void processConnection(ServerSocket);
+        void handleConnection(ServerSocket&);
 public:
 	IncomingProxy(int);
 	void run();

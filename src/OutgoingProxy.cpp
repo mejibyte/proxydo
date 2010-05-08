@@ -1,5 +1,6 @@
 #include <iostream>
 #include <set>
+#include <cstdlib>
 
 #include "sockets/api.h"
 
@@ -28,12 +29,12 @@ OutgoingProxy::OutgoingProxy() : port(8080) {
 
 void OutgoingProxy::run(){
 	try {
-		ServerSocket socket(port);
+		ServerSocket proxy(port);
 		cout << "# [Outgoing] Binding socket on port " << port << endl;
 		while (true){	
 			ServerSocket connection;
 			cout << "# [Outgoing] Accepting connections on port " << port << "..." << endl;
-			socket.accept ( connection );
+			proxy.accept ( connection );
 			cout << "# [Outgoing] Accepted connection" << endl;
 			if (fork() == 0){
 				OutgoingProxy::handleConnection(connection);
@@ -72,13 +73,13 @@ void OutgoingProxy::handleConnection(ServerSocket &connection){
 
 		if (checkBlockedHost(headers["Host"], connection)) throw SocketException("Blocked host");
 
-		ClientSocket remote(headers["Host"], 80);
-		remote << header;
+		ClientSocket webserver(headers["Host"], 80);
+		webserver << header;
 		cout << header;
 
-		Socket::relay_connection(connection, remote);
+		Socket::relay_connection(connection, webserver);
 		
-		remote.~ClientSocket();
+		webserver.~ClientSocket();
 		connection.~ServerSocket();
 	}
 	catch (SocketException& e){
