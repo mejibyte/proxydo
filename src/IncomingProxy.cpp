@@ -53,10 +53,6 @@ pair<string, int> IncomingProxy::findHost(string &requestLine){
 	for (map<string, string>::iterator i = routes.begin(); i != routes.end(); ++i){
 		const string &uri = i->first;
 		const string &host = i->second;
-		
-		// DEBUG(requestUri);
-		// DEBUG(uri);
-		// DEBUG(requestUri.find("/" + uri + "/"));
 
 		requestUri += "/";
 		if (requestUri.find("/" + uri + "/") == 0){
