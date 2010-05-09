@@ -24,9 +24,6 @@ OutgoingProxy::OutgoingProxy(const OutgoingProxy &other){
 	blockedHosts = other.blockedHosts;
 }
 
-OutgoingProxy::OutgoingProxy() : port(8080) {
-}
-
 void OutgoingProxy::run(){
 	try {
 		ServerSocket proxy(port);
