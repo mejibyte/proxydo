@@ -1,6 +1,8 @@
 #include <iostream>
 #include <set>
 #include <cstdlib>
+#include <string>
+#include <map>
 
 #include "sockets/api.h"
 
@@ -10,7 +12,7 @@
 
 using namespace std;
 
-IncomingProxy::IncomingProxy(int port) : port (port) {
+IncomingProxy::IncomingProxy(int port, map<string, string> routes) : port (port), routes(routes) {
 	cout << "# [Incoming] Initializing incoming proxy:" << endl;	
 	cout << "# [Incoming]      Port: " << port << endl;
 }
@@ -38,8 +40,8 @@ void IncomingProxy::run(){
 
 void IncomingProxy::handleConnection(ServerSocket &connection) {
   try {
-    string header = connection.readLine();
-    header += "Connection: close\r\n";
+    string method = connection.readLine();
+    string header = method + "Connection: close\r\n";
     while (true) {
       string s = connection.readLine();
       if (s.find("Connection") == 0) continue;
@@ -47,7 +49,9 @@ void IncomingProxy::handleConnection(ServerSocket &connection) {
       if (s == "\n" or s == "\r\n") break;
     }
 
-    //map<string, string> headers = util::extractHeaders(header);
+	map<string, string> headers = util::extractHeaders(header);
+	
+	//string host = routes["default"];
 
     //ClientSocket webserver(headers["Host"], 80);
     ClientSocket webserver("www.google.com", 80);

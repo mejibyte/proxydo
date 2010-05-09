@@ -13,7 +13,7 @@ outgoing:
 incoming:
    enabled: yes
    port: 80
-   map:
+   routes:
         portal1/: 200.180.105.3:80
         portal2/: 200.180.105.4:80
         portal3/subportal1/: 200.180.105.5:80
