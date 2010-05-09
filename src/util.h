@@ -10,13 +10,16 @@ namespace util {
 	const char LF = '\n';
 	const std::string CRLF = "\r\n";
 	
+	//String utilities
 	std::vector<std::string> split(std::string s, char delimiter = '.');
 	std::string strip(std::string s);
 	
 	int toInt(std::string s);
 
+	//HTTP related stuff
 	std::map<std::string, std::string> extractHeaders(const std::string &data) throw (char *);
 	std::string assembleHeaders(std::map<std::string, std::string> headers);
+	std::string cleanupRequestLine(std::string);
 	
 }
 

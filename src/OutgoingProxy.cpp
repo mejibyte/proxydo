@@ -57,8 +57,9 @@ bool OutgoingProxy::checkBlockedHost(string host, ServerSocket &connection){
 
 void OutgoingProxy::handleConnection(ServerSocket &connection){
 	try {
-		string header = connection.readLine(); //GET / HTTP/1.1
-		header += "Connection: close\r\n";
+		string requestLine = connection.readLine(); //GET / HTTP/1.1
+		requestLine = util::cleanupRequestLine(requestLine);		
+		string header = requestLine + "Connection: close\r\n";
 		while (true){
 			string s = connection.readLine();
 			if (s.find("Connection") == 0) continue;

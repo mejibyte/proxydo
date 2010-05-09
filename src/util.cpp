@@ -39,6 +39,36 @@ string util::assembleHeaders(map<string, string> headers){
 }
 
 
+//Receives the first line of an HTTP header
+//and makes sure the host starts with a slash.
+//Example:
+//  converts "GET http://www.google.com/something/nice HTTP/1.1"
+//  into     "GET /something/nice HTTP/1.1"
+string util::cleanupRequestLine(string s){
+	vector<string> parts = split(s, ' ');
+	if (parts.size() != 3){
+		throw "Invalid request line. It should contain exactly 3 parts separated by spaces. Example: 'GET / HTTP/1.1";
+	}
+	string resource = parts[1];	
+	if (resource.find("/") != 0){
+		//does not start with a slash
+		if (resource.find("http://") == 0){
+			int nextSlash = resource.find("/", string("http://").size());
+			if (nextSlash == string::npos){
+				throw "Invalid request line. The URI should contain at least one slash after http://";
+			}
+			resource = resource.substr(nextSlash, resource.size());
+		} else {
+			int nextSlash = resource.find("/");
+			if (nextSlash == string::npos){
+				throw "Invalid request line. The URI should contain at least one slash";
+			}			
+			resource = resource.substr(nextSlash, resource.size());
+		}
+	}
+	return parts[0] + " " + resource + " " + parts[2];
+}
+
 // Returns s without trailing and leading withespace
 string util::strip(string s) {
 	int i = 0, j = s.size() - 1;
