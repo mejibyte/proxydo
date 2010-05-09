@@ -1,5 +1,6 @@
 #include <iostream>
 #include <set>
+#include <cstdlib>
 
 #include "sockets/api.h"
 
@@ -23,17 +24,14 @@ OutgoingProxy::OutgoingProxy(const OutgoingProxy &other){
 	blockedHosts = other.blockedHosts;
 }
 
-OutgoingProxy::OutgoingProxy() : port(8080) {
-}
-
 void OutgoingProxy::run(){
 	try {
-		ServerSocket socket(port);
+		ServerSocket proxy(port);
 		cout << "# [Outgoing] Binding socket on port " << port << endl;
 		while (true){	
 			ServerSocket connection;
 			cout << "# [Outgoing] Accepting connections on port " << port << "..." << endl;
-			socket.accept ( connection );
+			proxy.accept ( connection );
 			cout << "# [Outgoing] Accepted connection" << endl;
 			if (fork() == 0){
 				OutgoingProxy::handleConnection(connection);
@@ -59,8 +57,9 @@ bool OutgoingProxy::checkBlockedHost(string host, ServerSocket &connection){
 
 void OutgoingProxy::handleConnection(ServerSocket &connection){
 	try {
-		string header = connection.readLine(); //GET / HTTP/1.1
-		header += "Connection: close\r\n";
+		string requestLine = connection.readLine(); //GET / HTTP/1.1
+		requestLine = util::cleanupRequestLine(requestLine);		
+		string header = requestLine + "Connection: close\r\n";
 		while (true){
 			string s = connection.readLine();
 			if (s.find("Connection") == 0) continue;
@@ -72,13 +71,13 @@ void OutgoingProxy::handleConnection(ServerSocket &connection){
 
 		if (checkBlockedHost(headers["Host"], connection)) throw SocketException("Blocked host");
 
-		ClientSocket remote(headers["Host"], 80);
-		remote << header;
+		ClientSocket webserver(headers["Host"], 80);
+		webserver << header;
 		cout << header;
 
-		Socket::relay_connection(connection, remote);
+		Socket::relay_connection(connection, webserver);
 		
-		remote.~ClientSocket();
+		webserver.~ClientSocket();
 		connection.~ServerSocket();
 	}
 	catch (SocketException& e){

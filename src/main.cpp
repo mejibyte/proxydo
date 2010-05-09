@@ -2,6 +2,9 @@
 #include <cassert>
 #include <vector>
 #include <csignal>
+#include <cstdlib>
+#include <sys/wait.h>
+
 #include "OutgoingProxy.h"
 #include "IncomingProxy.h"
 #include "config.h"
@@ -31,7 +34,7 @@ int main(){
 	cout << "# Starting up Proxydo" << endl;
 	signal(SIGINT, sig_int);
 	signal(SIGCHLD, sig_chld);
-	
+
 	Config config("config.yml");
 	try {
 		if(config.get_bool("outgoing.enabled"))	{	
@@ -44,11 +47,10 @@ int main(){
 				forks.push_back(p);
 			}
 		}
-		if(config.get_bool("incoming.enabled")) {
+		if(config.get_bool("incoming.enabled")){
 			int p = fork();
 			if(p == 0){
-				int Iport  = 10001;
-				IncomingProxy ip(Iport);
+				IncomingProxy ip(config.get_int("incoming.port"), config.get_map_string_string("incoming.routes"));
 				ip.run();
 				exit(0);
 			}else if (p > 0){
@@ -59,7 +61,7 @@ int main(){
 	} catch (char * s){
 		cout << s << endl;
 	}
-	
+
 	while (true) {
 		usleep(100);
 	}

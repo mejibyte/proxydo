@@ -2,8 +2,8 @@
 # Configuration for the outgoing proxy. That is, petitions that go from inside
 # our LAN to the internet.
 outgoing:
-    enabled: yes
-    port: 8080
+    enabled: no
+    port: 12345
     block:
         - xxx.com
         - asdf.com
@@ -11,13 +11,17 @@ outgoing:
 # Configuration for the incoming proxy. That is, petitions that come from
 # the internet to inside our LAN.
 incoming:
-   enabled: no
-   port: 80
-   map:
-        portal1/: 200.180.105.3:80
-        portal2/: 200.180.105.4:80
-        portal3/subportal1/: 200.180.105.5:80
-        portal3/subportal2/: 200.180.105.5:81
+   enabled: yes
+   port: 5000
+   
+   # Routes different URIs to different servers.
+   routes:
+        #Example: http://www.myproxy.com/site1/search would be fetched from http://www.google.com:80/search
+        site1: www.google.com.co:80 #Make sure it doesn't have any trailing or leading slashes!
+        site2: www.yahoo.com
+        site3/subsite1: www.whatismyip.org:80
+        site3/subsite2: bdigital.eafit.edu.co:8080
+        library: bdigital.eafit.edu.co:8080
    default: 127.0.0.1:80
 
 
