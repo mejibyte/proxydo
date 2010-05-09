@@ -47,8 +47,7 @@ int main(){
 		if(config.get_bool("incoming.enabled")) {
 			int p = fork();
 			if(p == 0){
-				int Iport  = 10001;
-				IncomingProxy ip(Iport);
+				IncomingProxy ip(config.get_int("incoming.port"));
 				ip.run();
 				exit(0);
 			}else if (p > 0){
