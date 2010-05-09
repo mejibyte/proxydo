@@ -35,6 +35,7 @@ string util::assembleHeaders(map<string, string> headers){
 	for (map<string, string>::iterator i = headers.begin(); i != headers.end(); ++i){
 		answer += i->first + ": " + i->second + "\r\n";
 	}
+	answer += "\r\n";
 	return answer;
 }
 
@@ -77,6 +78,12 @@ pair<string, int> util::extractHostAndPort(const std::string host){
 	}else{
 		return make_pair(host.substr(0, colon), toInt(host.substr(colon + 1, host.size())));
 	}
+}
+
+
+string util::removeTrailingLineBreaks(string s){
+	while (s.size() > 0 and (s[s.size()-1] == '\r' or s[s.size()-1] == '\n')) s.resize(s.size() - 1);
+	return s;
 }
 
 // Returns s without trailing and leading withespace

@@ -2,6 +2,9 @@
 #include <cassert>
 #include <vector>
 #include <csignal>
+#include <cstdlib>
+#include <sys/wait.h>
+
 #include "OutgoingProxy.h"
 #include "IncomingProxy.h"
 #include "config.h"

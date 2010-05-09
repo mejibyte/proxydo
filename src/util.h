@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#define DEBUG(x) cerr << "DEBUG " << __FILE__ << ":" << __LINE__ << " " #x " = " << x << endl
+
 namespace util {
 	const char CR = '\r';
 	const char LF = '\n';
@@ -13,6 +15,7 @@ namespace util {
 	//String utilities
 	std::vector<std::string> split(std::string s, char delimiter = '.');
 	std::string strip(std::string s);
+	std::string removeTrailingLineBreaks(std::string);
 	
 	int toInt(std::string s);
 
