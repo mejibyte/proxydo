@@ -16,6 +16,7 @@ namespace util {
 	int toInt(std::string s);
 
 	std::map<std::string, std::string> extractHeaders(const std::string &data) throw (char *);
+	std::string assembleHeaders(std::map<std::string, std::string> headers);
 	
 }
 

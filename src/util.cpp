@@ -1,5 +1,6 @@
 #include <string>
 #include <map>
+#include <iterator>
 #include <iostream>
 #include <cstdio>
 #include <cctype>
@@ -28,6 +29,15 @@ map<string, string> util::extractHeaders(const string &data) throw (char *){
 	}
 	return answer;
 }
+
+string util::assembleHeaders(map<string, string> headers){
+	string answer = "";
+	for (map<string, string>::iterator i = headers.begin(); i != headers.end(); ++i){
+		answer += i->first + ": " + i->second + "\r\n";
+	}
+	return answer;
+}
+
 
 // Returns s without trailing and leading withespace
 string util::strip(string s) {
