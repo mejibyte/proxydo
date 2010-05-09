@@ -69,6 +69,16 @@ string util::cleanupRequestLine(string s){
 	return parts[0] + " " + resource + " " + parts[2];
 }
 
+// Receives "www.google.com:80" and returns <"www.google.com", 80>
+pair<string, int> util::extractHostAndPort(const std::string host){
+	int colon = host.find(":");
+	if (colon == string::npos){
+		return make_pair(host, 80);
+	}else{
+		return make_pair(host.substr(0, colon), toInt(host.substr(colon + 1, host.size())));
+	}
+}
+
 // Returns s without trailing and leading withespace
 string util::strip(string s) {
 	int i = 0, j = s.size() - 1;

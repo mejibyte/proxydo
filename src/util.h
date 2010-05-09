@@ -20,6 +20,7 @@ namespace util {
 	std::map<std::string, std::string> extractHeaders(const std::string &data) throw (char *);
 	std::string assembleHeaders(std::map<std::string, std::string> headers);
 	std::string cleanupRequestLine(std::string);
+	std::pair<std::string, int> extractHostAndPort(const std::string);
 	
 }
 
