@@ -7,6 +7,7 @@
 #include "OutgoingProxy.h"
 #include "config.h"
 #include "util.h"
+#include "base64.h"
 
 using namespace std;
 
@@ -45,14 +46,51 @@ void OutgoingProxy::run(){
 }
 
 bool OutgoingProxy::checkBlockedHost(string host, ServerSocket &connection){
-	for (int i = 0; i < blockedHosts.size(); ++i){
-		if (host.find(blockedHosts[i]) != string::npos){
-			string reply = "<html><body>Blocked by Proxydo</body></html>";			
-			connection << "HTTP/1.1 200 OK\r\n\r\n" << reply; 			
-			return true;
-		}
-	}
-	return false;
+  Config config("config.yml");
+  for (int i = 0; i < blockedHosts.size(); ++i){
+    if (host.find(blockedHosts[i]) != string::npos){
+      string reply = "<html><body>Blocked by Proxydo</body></html>";			
+      connection << "HTTP/1.1 200 OK\r\n\r\n" << reply;
+      if (config.get_bool("outgoing.report")) OutgoingProxy::reportBlockedHost(host);
+      return true;
+    }
+  }
+  return false;
+}
+
+void OutgoingProxy::reportBlockedHost(string host) {
+  Config config("config.yml");
+  ClientSocket mailserver(config.get_string("outgoing.smtpserver"), config.get_int("outgoing.smtpport"));
+  string hostname = "HELO "+config.get_string("outgoing.hostname")+"\r\n";
+  string to = "RCPT TO: "+config.get_string("outgoing.to")+"\r\n";
+  string message = config.get_string("outgoing.message")+"\r\n\r\n"+host+"\r\n";
+  // Username and password are encoded in BASE64.
+  const std::string u = config.get_string("outgoing.username");
+  const std::string p = config.get_string("outgoing.password");
+  string user = base64_encode(reinterpret_cast<const unsigned char*>(u.c_str()), u.length())+"\r\n";
+  string passwd = base64_encode(reinterpret_cast<const unsigned char*>(p.c_str()), p.length())+"\r\n";
+  string from = "MAIL FROM: "+config.get_string("outgoing.from")+"\r\n";
+  string subject = "Subject: "+config.get_string("outgoing.subject")+"\r\n";
+  
+  // Sending mail
+  mailserver << hostname;
+  sleep(0.2);
+  mailserver << "AUTH LOGIN\r\n";
+  sleep(0.2);
+  mailserver << user;
+  sleep(0.2);
+  mailserver << passwd;
+  sleep(0.2);
+  mailserver << from;
+  sleep(0.2);
+  mailserver << to;
+  sleep(0.2);
+  mailserver << "DATA\r\n";
+  mailserver << subject;
+  mailserver << message;
+  mailserver << "\r\n.\r\nQUIT\r\n";
+
+  cout << "Mail sent to: " << config.get_string("outgoing.to") << endl;
 }
 
 void OutgoingProxy::handleConnection(ServerSocket &connection){
@@ -87,3 +125,5 @@ void OutgoingProxy::handleConnection(ServerSocket &connection){
 		cout << "# [Outgoing] Exception: " << s << endl;						
 	}
 }
+
+

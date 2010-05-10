@@ -16,6 +16,7 @@ public:
 	OutgoingProxy();
 	void handleConnection(ServerSocket&);		
 	void run();
+        void reportBlockedHost(std::string);
 };
 
 #endif
