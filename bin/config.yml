@@ -1,0 +1,39 @@
+---
+# Configuration for the outgoing proxy. That is, petitions that go from inside
+# our LAN to the internet.
+outgoing:
+    enabled: yes
+    port: 3500
+    block:
+        - xxx.com
+        - asdf.com
+    report: yes
+    hostname: test.org
+    from: test@test.org
+    to: example@example.org
+    smtpserver: smtp.test.org
+    smtpport: 25
+    username: test
+    password: test123
+    subject: Atención!
+    message: El usuario visito un sitio prohibido!
+
+# Configuration for the incoming proxy. That is, petitions that come from
+# the internet to inside our LAN.
+incoming:
+   enabled: yes
+   port: 5000
+   
+   # Routes different URIs to different servers.
+   routes:
+        #Example: http://www.myproxy.com/site1/search would be fetched from http://www.google.com:80/search
+        site1: www.google.com.co:80 #Make sure it doesn't have any trailing or leading slashes!
+        site2: www.yahoo.com
+        site3/subsite1: www.whatismyip.org:80
+        site3/subsite2: bdigital.eafit.edu.co:8080
+        library: bdigital.eafit.edu.co:8080
+   default: 127.0.0.1:80
+
+
+
+

@@ -33,6 +33,8 @@ Proxydo is a stupidly simple proxy.
 
 - The compiled binary lies in /build.
 
+- Modify config.yaml file and then execute ./proxydo to run the server.
+
 - If a shared library error is shown when you execute ./proxydo, issue the following command:
   
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
@@ -64,4 +66,4 @@ Proxydo is a stupidly simple proxy.
 
 - The compiled binary lies in /build. 
   
-
+- Modify config.yaml file and then execute ./proxydo to run the server.
