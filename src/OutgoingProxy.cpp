@@ -90,6 +90,7 @@ void OutgoingProxy::reportBlockedHost(string host) {
   mailserver << message;
   mailserver << "\r\n.\r\nQUIT\r\n";
 
+  mailserver.~ClientSocket();
   cout << "Mail sent to: " << config.get_string("outgoing.to") << endl;
 }
 
